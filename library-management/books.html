@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Sách</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" src="logoCMC.png" alt="logoCMC" />
+      <h1>Quản lý Sách</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="readers.html">Thẻ thư viện</a></li>
+          <li><a href="books.html">Quản lý sách</a></li>
+          <li><a href="borrow-return.html">Mượn trả sách</a></li>
+          <li><a href="reports.html">Báo cáo</a></li>
+          <li><a href="staff.html">Quản lý nhân viên</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Đăng nhập -->
+      <section id="login-section">
+        <h2>Đăng nhập</h2>
+        <form id="login-form" onsubmit="return login(event)">
+          <label for="username">Tên đăng nhập:</label>
+          <input type="text" id="username" required />
+
+          <label for="password">Mật khẩu:</label>
+          <input type="password" id="password" required />
+
+          <button type="submit">Đăng nhập</button>
+        </form>
+        <p id="login-error" style="color: red; display: none">
+          Tên đăng nhập hoặc mật khẩu không đúng!
+        </p>
+      </section>
+
+      <!-- Quản lý sách (Chỉ hiển thị khi đăng nhập thành công) -->
+      <section id="book-management" style="display: none">
+        <h2>Quản lý Sách</h2>
+
+        <!-- Form Thêm Sách -->
+        <form id="book-form">
+          <label for="book-id">Mã đầu sách:</label>
+          <input type="text" id="book-id" required />
+
+          <label for="book-title">Tên đầu sách:</label>
+          <input type="text" id="book-title" required />
+
+          <label for="book-author">Tác giả:</label>
+          <input type="text" id="book-author" required />
+
+          <label for="book-publisher">Nhà xuất bản:</label>
+          <input type="text" id="book-publisher" required />
+
+          <label for="book-pages">Số trang:</label>
+          <input type="number" id="book-pages" required />
+
+          <label for="book-size">Kích thước:</label>
+          <input type="text" id="book-size" required />
+
+          <label for="book-quantity">Số lượng:</label>
+          <input type="number" id="book-quantity" required />
+
+          <label for="book-category">Chuyên ngành:</label>
+          <select id="book-category" required>
+            <option value="">Chọn chuyên ngành</option>
+            <option value="CNTT">Công nghệ thông tin</option>
+            <option value="Kinh tế">Kinh tế</option>
+            <option value="Luật">Luật</option>
+          </select>
+
+          <button type="button" onclick="addBook()">Thêm Sách</button>
+        </form>
+      </section>
+
+      <!-- Danh sách Sách -->
+      <section id="book-list" style="display: none">
+        <h2>Danh Sách Sách</h2>
+        <table id="books-table">
+          <thead>
+            <tr>
+              <th>Mã đầu sách</th>
+              <th>Tên sách</th>
+              <th>Tác giả</th>
+              <th>Nhà xuất bản</th>
+              <th>Số trang</th>
+              <th>Kích thước</th>
+              <th>Số lượng</th>
+              <th>Chuyên ngành</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Nội dung sách sẽ được thêm động -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      // Mảng sách
+      const books = [];
+
+      // Dữ liệu đăng nhập giả
+      const users = [
+        { username: "admin", password: "123456" },
+        // Tên đăng nhập và mật khẩu của admin
+      ];
+
+      // Thêm sách mới
+      function addBook() {
+        const bookId = document.getElementById("book-id").value.trim();
+        const bookTitle = document.getElementById("book-title").value.trim();
+        const bookAuthor = document.getElementById("book-author").value.trim();
+        const bookPublisher = document
+          .getElementById("book-publisher")
+          .value.trim();
+        const bookPages = document.getElementById("book-pages").value;
+        const bookSize = document.getElementById("book-size").value.trim();
+        const bookQuantity = document.getElementById("book-quantity").value;
+        const bookCategory = document
+          .getElementById("book-category")
+          .value.trim();
+
+        if (
+          !bookId ||
+          !bookTitle ||
+          !bookAuthor ||
+          !bookPublisher ||
+          !bookPages ||
+          !bookSize ||
+          !bookQuantity ||
+          !bookCategory
+        ) {
+          alert("Vui lòng điền đầy đủ thông tin.");
+          return;
+        }
+
+        books.push({
+          bookId,
+          bookTitle,
+          bookAuthor,
+          bookPublisher,
+          bookPages,
+          bookSize,
+          bookQuantity,
+          bookCategory,
+        });
+
+        renderBooks();
+        document.getElementById("book-form").reset();
+      }
+
+      // Xóa sách
+      function deleteBook(index) {
+        books.splice(index, 1);
+        renderBooks();
+      }
+
+      // Sửa sách
+      function editBook(index) {
+        const book = books[index];
+        document.getElementById("book-id").value = book.bookId;
+        document.getElementById("book-title").value = book.bookTitle;
+        document.getElementById("book-author").value = book.bookAuthor;
+        document.getElementById("book-publisher").value = book.bookPublisher;
+        document.getElementById("book-pages").value = book.bookPages;
+        document.getElementById("book-size").value = book.bookSize;
+        document.getElementById("book-quantity").value = book.bookQuantity;
+        document.getElementById("book-category").value = book.bookCategory;
+
+        books.splice(index, 1); // Xóa sách đã chọn, sẽ thêm lại sau khi sửa
+      }
+
+      // Hiển thị danh sách sách
+      function renderBooks() {
+        const booksTableBody = document
+          .getElementById("books-table")
+          .querySelector("tbody");
+        booksTableBody.innerHTML = "";
+
+        books.forEach((book, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${book.bookId}</td>
+                    <td>${book.bookTitle}</td>
+                    <td>${book.bookAuthor}</td>
+                    <td>${book.bookPublisher}</td>
+                    <td>${book.bookPages}</td>
+                    <td>${book.bookSize}</td>
+                    <td>${book.bookQuantity}</td>
+                    <td>${book.bookCategory}</td>
+                    <td>
+                        <button onclick="editBook(${index})">Sửa</button>
+                        <button onclick="deleteBook(${index})">Xóa</button>
+                    </td>
+                `;
+          booksTableBody.appendChild(row);
+        });
+      }
+
+      // Đăng nhập
+      function login(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        const user = users.find(
+          (u) => u.username === username && u.password === password
+        );
+
+        if (user) {
+          // Nếu đăng nhập thành công
+          document.getElementById("login-section").style.display = "none";
+          document.getElementById("book-management").style.display = "block";
+          document.getElementById("book-list").style.display = "block";
+        } else {
+          // Nếu đăng nhập thất bại
+          document.getElementById("login-error").style.display = "block";
+        }
+      }
+
+      // Khởi tạo ban đầu khi trang tải
+      document.addEventListener("DOMContentLoaded", renderBooks);
+    </script>
+  </body>
+</html>

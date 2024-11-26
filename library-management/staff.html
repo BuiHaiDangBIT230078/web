@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Nhân viên</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" src="logoCMC.png" alt="logoCMC" />
+      <h1>Quản lý Nhân viên</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="readers.html">Thẻ thư viện</a></li>
+          <li><a href="books.html">Quản lý sách</a></li>
+          <li><a href="borrow-return.html">Mượn trả sách</a></li>
+          <li><a href="reports.html">Báo cáo</a></li>
+          <li><a href="staff.html">Quản lý nhân viên</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Form đăng nhập -->
+      <div id="login-section">
+        <h2>Đăng nhập</h2>
+        <form id="login-form">
+          <label for="username">Tên đăng nhập:</label>
+          <input type="text" id="username" required />
+
+          <label for="password">Mật khẩu:</label>
+          <input type="password" id="password" required />
+
+          <button type="button" onclick="login()">Đăng nhập</button>
+        </form>
+      </div>
+
+      <!-- Phần quản lý nhân viên -->
+      <div id="staff-section" style="display: none">
+        <h2>Thêm Nhân viên</h2>
+        <form id="staff-form">
+          <label for="staff-name">Tên nhân viên:</label>
+          <input type="text" id="staff-name" required />
+
+          <label for="staff-role">Vai trò:</label>
+          <select id="staff-role">
+            <option value="Admin">Quản trị viên</option>
+            <option value="Librarian">Thủ thư</option>
+          </select>
+
+          <label for="staff-username">Tên đăng nhập:</label>
+          <input type="text" id="staff-username" required />
+
+          <label for="staff-password">Mật khẩu:</label>
+          <input type="password" id="staff-password" required />
+
+          <button type="button" onclick="addStaff()">Thêm Nhân viên</button>
+        </form>
+
+        <h3>Danh sách Nhân viên</h3>
+        <table id="staff-list">
+          <thead>
+            <tr>
+              <th>Mã nhân viên</th>
+              <th>Tên nhân viên</th>
+              <th>Vai trò</th>
+              <th>Tên đăng nhập</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <button onclick="logout()">Đăng xuất</button>
+      </div>
+    </main>
+
+    <script>
+      // Tài khoản mẫu cho đăng nhập
+      const adminAccount = { username: "admin", password: "123456" };
+
+      // Kiểm tra trạng thái đăng nhập
+      document.addEventListener("DOMContentLoaded", () => {
+        const isLoggedIn = localStorage.getItem("isLoggedIn");
+        if (isLoggedIn === "true") {
+          showStaffSection();
+        }
+      });
+
+      // Hàm xử lý đăng nhập
+      function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (
+          username === adminAccount.username &&
+          password === adminAccount.password
+        ) {
+          localStorage.setItem("isLoggedIn", "true");
+          alert("Đăng nhập thành công!");
+          showStaffSection();
+        } else {
+          alert("Tên đăng nhập hoặc mật khẩu không đúng!");
+        }
+      }
+
+      // Hiển thị phần quản lý nhân viên
+      function showStaffSection() {
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("staff-section").style.display = "block";
+      }
+
+      // Đăng xuất
+      function logout() {
+        localStorage.removeItem("isLoggedIn");
+        alert("Bạn đã đăng xuất.");
+        location.reload();
+      }
+
+      // Dữ liệu mẫu cho nhân viên
+      let staffData = [
+        { id: 1, name: "Nguyễn Văn A", role: "Admin", username: "admin1" },
+        {
+          id: 2,
+          name: "Trần Thị B",
+          role: "Librarian",
+          username: "librarian1",
+        },
+      ];
+
+      // Hàm hiển thị danh sách nhân viên
+      function renderStaffList() {
+        const staffList = document
+          .getElementById("staff-list")
+          .querySelector("tbody");
+        staffList.innerHTML = "";
+
+        staffData.forEach((staff, index) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+                    <td>${staff.id}</td>
+                    <td>${staff.name}</td>
+                    <td>${staff.role}</td>
+                    <td>${staff.username}</td>
+                    <td>
+                        <button onclick="editStaff(${index})">Sửa</button>
+                        <button onclick="deleteStaff(${index})">Xóa</button>
+                    </td>
+                `;
+          staffList.appendChild(row);
+        });
+      }
+
+      // Hàm thêm nhân viên
+      function addStaff() {
+        const name = document.getElementById("staff-name").value;
+        const role = document.getElementById("staff-role").value;
+        const username = document.getElementById("staff-username").value;
+        const password = document.getElementById("staff-password").value;
+
+        if (!name || !role || !username || !password) {
+          alert("Vui lòng điền đầy đủ thông tin!");
+          return;
+        }
+
+        const newStaff = {
+          id: staffData.length + 1,
+          name,
+          role,
+          username,
+        };
+        staffData.push(newStaff);
+        renderStaffList();
+        document.getElementById("staff-form").reset();
+      }
+
+      // Hàm chỉnh sửa nhân viên
+      function editStaff(index) {
+        const staff = staffData[index];
+        document.getElementById("staff-name").value = staff.name;
+        document.getElementById("staff-role").value = staff.role;
+        document.getElementById("staff-username").value = staff.username;
+        deleteStaff(index);
+      }
+
+      // Hàm xóa nhân viên
+      function deleteStaff(index) {
+        if (confirm("Bạn có chắc chắn muốn xóa nhân viên này không?")) {
+          staffData.splice(index, 1);
+          renderStaffList();
+        }
+      }
+
+      // Hiển thị danh sách nhân viên khi đăng nhập
+      document.addEventListener("DOMContentLoaded", renderStaffList);
+    </script>
+  </body>
+</html>

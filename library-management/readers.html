@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Thẻ Thư Viện</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" src="logoCMC.png" alt="logoCMC" />
+      <h1>Quản lý Thẻ Thư Viện</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="readers.html">Thẻ thư viện</a></li>
+          <li><a href="books.html">Quản lý sách</a></li>
+          <li><a href="borrow-return.html">Mượn trả sách</a></li>
+          <li><a href="reports.html">Báo cáo</a></li>
+          <li><a href="staff.html">Quản lý nhân viên</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <h2>Thêm Thẻ Thư Viện</h2>
+        <form id="reader-form">
+          <label for="reader-id">Mã độc giả:</label>
+          <input type="text" id="reader-id" required />
+
+          <label for="reader-name">Họ và tên:</label>
+          <input type="text" id="reader-name" required />
+
+          <label for="reader-class">Lớp:</label>
+          <input type="text" id="reader-class" required />
+
+          <label for="reader-birthday">Ngày sinh:</label>
+          <input type="date" id="reader-birthday" required />
+
+          <label for="reader-gender">Giới tính:</label>
+          <select id="reader-gender" required>
+            <option value="Nam">Nam</option>
+            <option value="Nữ">Nữ</option>
+          </select>
+
+          <button type="button" onclick="addReader()">Thêm Thẻ</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Danh sách Thẻ Thư Viện</h2>
+        <table id="reader-table">
+          <thead>
+            <tr>
+              <th>Mã độc giả</th>
+              <th>Họ và tên</th>
+              <th>Lớp</th>
+              <th>Ngày sinh</th>
+              <th>Giới tính</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Các thẻ sẽ được hiển thị ở đây -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      const readers = [];
+
+      function addReader() {
+        const readerId = document.getElementById("reader-id").value.trim();
+        const readerName = document.getElementById("reader-name").value.trim();
+        const readerClass = document
+          .getElementById("reader-class")
+          .value.trim();
+        const readerBirthday = document.getElementById("reader-birthday").value;
+        const readerGender = document.getElementById("reader-gender").value;
+
+        if (
+          !readerId ||
+          !readerName ||
+          !readerClass ||
+          !readerBirthday ||
+          !readerGender
+        ) {
+          alert("Vui lòng điền đầy đủ thông tin!");
+          return;
+        }
+
+        readers.push({
+          readerId,
+          readerName,
+          readerClass,
+          readerBirthday,
+          readerGender,
+        });
+
+        renderReaders();
+        document.getElementById("reader-form").reset();
+      }
+
+      function renderReaders() {
+        const readerTableBody = document
+          .getElementById("reader-table")
+          .querySelector("tbody");
+        readerTableBody.innerHTML = "";
+
+        readers.forEach((reader, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                    <td>${reader.readerId}</td>
+                    <td>${reader.readerName}</td>
+                    <td>${reader.readerClass}</td>
+                    <td>${reader.readerBirthday}</td>
+                    <td>${reader.readerGender}</td>
+                    <td>
+                        <button onclick="editReader(${index})">Sửa</button>
+                        <button onclick="deleteReader(${index})">Xóa</button>
+                    </td>
+                `;
+          readerTableBody.appendChild(row);
+        });
+      }
+
+      function editReader(index) {
+        const reader = readers[index];
+        document.getElementById("reader-id").value = reader.readerId;
+        document.getElementById("reader-name").value = reader.readerName;
+        document.getElementById("reader-class").value = reader.readerClass;
+        document.getElementById("reader-birthday").value =
+          reader.readerBirthday;
+        document.getElementById("reader-gender").value = reader.readerGender;
+
+        readers.splice(index, 1); // Xóa thẻ đã chọn để sửa
+      }
+
+      function deleteReader(index) {
+        readers.splice(index, 1);
+        renderReaders();
+      }
+
+      // Render danh sách khi trang tải
+      document.addEventListener("DOMContentLoaded", renderReaders);
+    </script>
+  </body>
+</html>

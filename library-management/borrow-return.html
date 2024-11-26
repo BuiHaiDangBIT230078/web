@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Mượn Trả Sách</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" src="logoCMC.png" alt="logoCMC" />
+      <h1>Quản lý Mượn Trả Sách</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="readers.html">Thẻ thư viện</a></li>
+          <li><a href="books.html">Quản lý sách</a></li>
+          <li><a href="borrow-return.html">Mượn trả sách</a></li>
+          <li><a href="reports.html">Báo cáo</a></li>
+          <li><a href="staff.html">Quản lý nhân viên</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="borrow-form-section">
+        <h2>Phiếu Mượn Sách</h2>
+        <form id="borrow-form">
+          <label for="reader-name">Họ tên:</label>
+          <input type="text" id="reader-name" required />
+
+          <label for="reader-phone">Số điện thoại:</label>
+          <input type="tel" id="reader-phone" required pattern="[0-9]{10}" />
+
+          <label for="reader-id">MSSV:</label>
+          <input type="text" id="reader-id" required />
+
+          <label for="book-id">Mã sách:</label>
+          <input type="text" id="book-id" required />
+
+          <label for="book-title">Tên sách:</label>
+          <input type="text" id="book-title" required />
+
+          <label for="borrow-date">Ngày mượn:</label>
+          <input type="date" id="borrow-date" required />
+
+          <button type="button" onclick="addBorrowEntry()">
+            Thêm Phiếu Mượn
+          </button>
+        </form>
+      </section>
+
+      <section id="borrow-list-section">
+        <h2>Danh sách Phiếu Mượn</h2>
+        <table id="borrow-list">
+          <thead>
+            <tr>
+              <th>Họ tên</th>
+              <th>Số điện thoại</th>
+              <th>MSSV</th>
+              <th>Mã sách</th>
+              <th>Tên sách</th>
+              <th>Ngày mượn</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      const borrowEntries = [];
+
+      function addBorrowEntry() {
+        const name = document.getElementById("reader-name").value.trim();
+        const phone = document.getElementById("reader-phone").value.trim();
+        const studentId = document.getElementById("reader-id").value.trim();
+        const bookId = document.getElementById("book-id").value.trim();
+        const bookTitle = document.getElementById("book-title").value.trim();
+        const borrowDate = document.getElementById("borrow-date").value;
+
+        if (
+          !name ||
+          !phone ||
+          !studentId ||
+          !bookId ||
+          !bookTitle ||
+          !borrowDate
+        ) {
+          alert("Vui lòng điền đầy đủ thông tin.");
+          return;
+        }
+
+        borrowEntries.push({
+          name,
+          phone,
+          studentId,
+          bookId,
+          bookTitle,
+          borrowDate,
+          status: "Đang mượn",
+        });
+
+        renderBorrowList();
+        document.getElementById("borrow-form").reset();
+      }
+
+      function markAsReturned(index) {
+        borrowEntries[index].status = "Đã trả";
+        renderBorrowList();
+      }
+
+      function renderBorrowList() {
+        const borrowList = document
+          .getElementById("borrow-list")
+          .querySelector("tbody");
+        borrowList.innerHTML = "";
+
+        borrowEntries.forEach((entry, index) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+                    <td>${entry.name}</td>
+                    <td>${entry.phone}</td>
+                    <td>${entry.studentId}</td>
+                    <td>${entry.bookId}</td>
+                    <td>${entry.bookTitle}</td>
+                    <td>${entry.borrowDate}</td>
+                    <td>${entry.status}</td>
+                    <td>
+                        ${
+                          entry.status === "Đang mượn"
+                            ? `<button onclick="markAsReturned(${index})">Đánh dấu đã trả</button>`
+                            : ""
+                        }
+                    </td>
+                `;
+          borrowList.appendChild(row);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        renderBorrowList();
+      });
+    </script>
+  </body>
+</html>

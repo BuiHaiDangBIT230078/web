@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Báo cáo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <img id="logo" src="logoCMC.png" alt="logoCMC" />
+      <h1>Báo cáo Thống kê</h1>
+      <nav>
+        <ul>
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="readers.html">Thẻ thư viện</a></li>
+          <li><a href="books.html">Quản lý sách</a></li>
+          <li><a href="borrow-return.html">Mượn trả sách</a></li>
+          <li><a href="reports.html">Báo cáo</a></li>
+          <li><a href="staff.html">Quản lý nhân viên</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <h2>Sách được mượn nhiều nhất</h2>
+      <table id="top-books">
+        <thead>
+          <tr>
+            <th>Tên sách</th>
+            <th>Số lượt mượn</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h2>Danh sách độc giả chưa trả sách</h2>
+      <table id="pending-readers">
+        <thead>
+          <tr>
+            <th>Mã độc giả</th>
+            <th>Tên độc giả</th>
+            <th>Sách chưa trả</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </main>
+    <script src="js/script.js"></script>
+  </body>
+</html>
